@@ -64,8 +64,10 @@ public class TaskManagerRestService {
 	 */
 	@Path("/delete/{id}")
 	@DELETE
-	public void removeTask(@PathParam("id") String id){
+	@Produces(MediaType.TEXT_PLAIN)
+	public String removeTask(@PathParam("id") String id){
 		tasks.removeById(id);
+		return id;
 	}
 	
 	@Path("/mark")
