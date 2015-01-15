@@ -55,7 +55,7 @@ public class TaskDB {
 	 *            The task
 	 */
 	public void remove(Task task) {
-		tasks.remove((task.getId()));
+		tasks.remove(task.getId());
 	}
 
 	/**
@@ -96,12 +96,12 @@ public class TaskDB {
 	 * @return The list containing the sorted tasks.
 	 */
 	public List<Task> getSortedTasksAsList() {
-		List<Task> tasks = new ArrayList<>();
-		PriorityQueue<Task> sorted = getSortedTasks();
-		while (!sorted.isEmpty()) {
-			tasks.add(sorted.poll());
+		List<Task> sortedTasks = new ArrayList<>();
+		PriorityQueue<Task> heap = getSortedTasks();
+		while (!heap.isEmpty()) {
+			sortedTasks.add(heap.poll());
 		}
-		return tasks;
+		return sortedTasks;
 	}
 
 	/**
