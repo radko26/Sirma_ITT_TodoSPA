@@ -10,8 +10,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.json.JSONArray;
-
 import com.sirma.itt.taskmgr.model.Task;
 import com.sirma.itt.taskmgr.util.TaskDB;
 
