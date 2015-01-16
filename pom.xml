@@ -28,9 +28,9 @@
 	</licenses>
 
 	<properties>
-	
+
 		<plugin.jacoco.version>0.7.2.201409121644</plugin.jacoco.version>
-	
+
 		<!-- Explicitly declaring the source encoding eliminates the following 
 			message: -->
 		<!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered 
@@ -176,6 +176,14 @@
 			<scope>test</scope>
 		</dependency>
 
+
+		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+
+
 		<!-- Optional, but highly recommended -->
 		<!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA) 
 			JPA from JUnit/TestNG -->
@@ -273,8 +281,31 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${version.surefire.plugin}</version>
 						<configuration>
-							<skip>true</skip>
+							<skip>false</skip>
+							<excludes>
+								<exclude>**/itest/**</exclude>
+							</excludes>
 						</configuration>
+
+						<executions>
+
+							<execution>
+								<id>surefire-itest</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<configuration>
+									<excludes>
+										<exclude>none</exclude>
+									</excludes>
+									<includes>
+										<include>**/itest/**</include>
+									</includes>
+								</configuration>
+							</execution>
+						</executions>
+
 					</plugin>
 				</plugins>
 			</build>
