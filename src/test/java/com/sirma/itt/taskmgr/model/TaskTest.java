@@ -11,7 +11,7 @@ import com.sirma.itt.taskmgr.model.Task;
  * @author radoslav
  *
  */
-public class TestTask {
+public class TaskTest {
 
 	@Test
 	public void test() {

@@ -1,18 +1,15 @@
 package com.sirma.itt.taskmgr.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.sirma.itt.taskmgr.model.Task;
 import com.sirma.itt.taskmgr.model.TaskBuilder;
-import com.sirma.itt.taskmgr.util.TaskDB;
 
 /**
  * Unit tests of {@link TaskDB}
