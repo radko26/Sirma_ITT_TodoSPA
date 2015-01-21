@@ -29,8 +29,13 @@
 
 	<properties>
 
-		<plugin.jacoco.version>0.7.2.201409121644</plugin.jacoco.version>
 
+
+		<plugin.jacoco.version>0.7.2.201409121644</plugin.jacoco.version>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.itReportPath>${project.basedir}/target/coverage-reports/jacoco-ut.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.reportPath>${project.basedir}/target/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>
 		<!-- Explicitly declaring the source encoding eliminates the following 
 			message: -->
 		<!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered 
@@ -53,6 +58,9 @@
 		<!-- maven-compiler-plugin -->
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
+
+
+
 	</properties>
 
 
@@ -224,20 +232,86 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${plugin.jacoco.version}</version>
-				<configuration>
-					<destFile>${sonar.jacoco.reportPath}</destFile>
-				</configuration>
+
 				<executions>
+					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
+						is passed as VM argument when Maven the Surefire plugin is executed. -->
 					<execution>
-						<id>agent</id>
+						<id>pre-unit-test</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+							<!-- Sets the name of the property containing the settings for JaCoCo 
+								runtime agent. -->
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</execution>
+					<!-- Ensures that the code coverage report for unit tests is created 
+						after unit tests have been run. -->
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+							<!-- Sets the output directory for the code coverage report. -->
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+
+							<excludes>
+								<exclude>**/itest/**/*.class</exclude>
+							</excludes>
+
+						</configuration>
+					</execution>
+
+					<!-- The Executions required by unit tests are omitted. -->
+					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
+						is passed as VM argument when Maven the Failsafe plugin is executed. -->
+					<execution>
+						<id>pre-integration-test</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
+							<!-- Sets the name of the property containing the settings for JaCoCo 
+								runtime agent. -->
+							<propertyName>failsafeArgLine</propertyName>
+						</configuration>
+					</execution>
+					<!-- Ensures that the code coverage report for integration tests after 
+						integration tests have been run. -->
+					<execution>
+						<id>post-integration-test</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<dataFile>${project.build.directory}/coverage-reports/jacoco-it.exec</dataFile>
+							<!-- Sets the output directory for the code coverage report. -->
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+							<includes>
+								<include>**/itest/**/*.class</include>
+							</includes>
+						</configuration>
 					</execution>
 				</executions>
+
+
+
 			</plugin>
 
-			<!-- Compiler plugin enforces Java 1.6 compatibility and activates annotation 
+			<!-- Compiler plugin enforces Java 1.7 compatibility and activates annotation 
 				processors -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -277,34 +351,51 @@
 			</activation>
 			<build>
 				<plugins>
+
+					<plugin>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.8</version>
+						<executions>
+							<!-- Ensures that both integration-test and verify goals of the Failsafe 
+								Maven plugin are executed. -->
+							<execution>
+								<id>integration-tests</id>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+								<configuration>
+									<!-- Sets the VM argument line used when integration tests are run. -->
+									<argLine>${failsafeArgLine}</argLine>
+									<!-- Skips integration tests if the value of skip.integration.tests 
+										property is true -->
+									<skipTests>false</skipTests>
+									<includes>
+										<include>**/itest/**/*.java</include>
+									</includes>
+
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>${version.surefire.plugin}</version>
 						<configuration>
-							<skip>false</skip>
+							<!-- Sets the VM argument line used when unit tests are run. -->
+							<argLine>${surefireArgLine}</argLine>
+							<!-- Skips unit tests if the value of skip.unit.tests property is 
+								true -->
+							<skipTests>false</skipTests>
+							<!-- Excludes integration tests when unit tests are run. -->
 							<excludes>
-								<exclude>**/itest/**</exclude>
+								<exclude>**/itest/**/*.java</exclude>
 							</excludes>
 						</configuration>
 
-						<executions>
+						<executions />
 
-							<execution>
-								<id>surefire-itest</id>
-								<phase>integration-test</phase>
-								<goals>
-									<goal>test</goal>
-								</goals>
-								<configuration>
-									<excludes>
-										<exclude>none</exclude>
-									</excludes>
-									<includes>
-										<include>**/itest/**</include>
-									</includes>
-								</configuration>
-							</execution>
-						</executions>
 
 					</plugin>
 				</plugins>
