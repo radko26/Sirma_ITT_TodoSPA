@@ -34,7 +34,7 @@
 		<plugin.jacoco.version>0.7.2.201409121644</plugin.jacoco.version>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.itReportPath>${project.basedir}/target/coverage-reports/jacoco-ut.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.itReportPath>${project.basedir}/target/coverage-reports/jacoco-it.exec</sonar.jacoco.itReportPath>
 		<sonar.jacoco.reportPath>${project.basedir}/target/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>
 		<!-- Explicitly declaring the source encoding eliminates the following 
 			message: -->
